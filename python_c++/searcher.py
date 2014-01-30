@@ -1,4 +1,6 @@
 import search_helper
+import hashlib
+import sys
 
 class Searcher(object):
   def __init__(self, data):
@@ -11,7 +13,11 @@ class Searcher(object):
     search_helper.destroy(self.search_helper_data)
 
 
-if __name__ == "__main__":
+def other_cpu_task(word):
+  return hashlib.sha256(word).hexdigest()
+
+
+def main():
   ghostery_mock = [(0, "doubleclick.com"), (1, "advertising.com"), (2, "valueclick.com")]
   searcher = Searcher(ghostery_mock)
   res = searcher.search("doubleclick.com/blah?click=advertising.com")
@@ -32,7 +38,13 @@ if __name__ == "__main__":
   for i in xrange(MAX_RUNS):
     word = fp.next().lower().strip()
     searcher.search(word)
+    h = other_cpu_task(word)
   print "Searching inside of the dictionary took: %f" % (time.time() - start)
 
-
-
+if __name__ == "__main__":
+  if len(sys.argv) > 1 and sys.argv[1] == 'profile':
+    print >> sys.stderr, 'Profiling', sys.argv[0]
+    import cProfile
+    cProfile.run('main()','profile.out')
+  else:
+    main()
