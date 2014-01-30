@@ -9,10 +9,6 @@ class Searcher(object):
   def search(self,substring):
     return search_helper.search(self.search_helper_data, substring)
 
-  def __del__(self):
-    search_helper.destroy(self.search_helper_data)
-
-
 def other_cpu_task(word):
   return hashlib.sha256(word).hexdigest()
 
